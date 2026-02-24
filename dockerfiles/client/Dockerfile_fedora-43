@@ -1,0 +1,14 @@
+FROM fedora:43
+
+COPY check-mk-agent*.rpm /tmp/
+
+RUN dnf -y install iproute \
+                   lsof \
+                   nmap-ncat \
+                   procps-ng
+
+RUN dnf -y install /tmp/*.rpm && \
+    rm -f /tmp/check-mk-agent*.rpm
+
+EXPOSE 6556/tcp
+CMD ["nc", "-l", "6556", "-k", "-e", "/usr/bin/check_mk_agent"]
